@@ -1,0 +1,116 @@
+version: '3.8'  # Versione del formato di Docker Compose
+
+services:
+  frontend:
+    image: nawengm/front_end:e_commerce:latest  # Nome dell'immagine personalizzata del front-end Angular SSR
+    container_name: frontend
+    ports:
+      - "3000:3000"  # Mappa la porta 3000 del container alla porta 3000 del host
+    depends_on:
+      - backend  # Il front-end dipende dal servizio back-end
+    networks:
+      - app-network  # Rete condivisa con il back-end
+
+  backend:
+    image: nawengm/back_end:e_commerce:latest  # Nome dell'immagine personalizzata del back-end Spring Boot
+    container_name: backend
+    ports:
+      - "8080:8080"  # Mappa la porta 8080 del container alla porta 8080 dell'host
+    depends_on:
+      - oracledb
+      - mongodb
+      - influxdb
+      - cassandra
+      - redis
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracledb:1521:XE
+      - SPRING_DATASOURCE_USERNAME=oracle_user
+      - SPRING_DATASOURCE_PASSWORD=oracle_password
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=oracle.jdbc.OracleDriver
+      
+      # Variabili per MongoDB
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo_user:mongo_password@mongodb:27017/mydb
+      - SPRING_DATA_MONGODB_DATABASE=mydb
+      
+      # Variabili per InfluxDB
+      - SPRING_INFLUXDB_URL=http://influxdb:8086
+      - SPRING_INFLUXDB_TOKEN=influxdb_token
+      - SPRING_INFLUXDB_ORG=my_org
+      - SPRING_INFLUXDB_BUCKET=my_bucket
+
+      # Variabili per Cassandra
+      - SPRING_DATA_CASSANDRA_CONTACT_POINTS=cassandra
+      - SPRING_DATA_CASSANDRA_PORT=9042
+      - SPRING_DATA_CASSANDRA_KEYSPACE_NAME=my_keyspace
+      - SPRING_DATA_CASSANDRA_USERNAME=cassandra_user
+      - SPRING_DATA_CASSANDRA_PASSWORD=cassandra_password
+
+      # Variabili per Redis
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      # Variabili per Neo4j
+      - SPRING_DATA_NEO4J_URI=bolt://neo4j:7687
+      - SPRING_DATA_NEO4J_USERNAME=neo4j_user
+      - SPRING_DATA_NEO4J_PASSWORD=neo4j_password
+    networks:
+      - app-network
+
+  oracledb:
+    image: nawengm/oracle_sql:e_commerce:latest  # Immagine personalizzata di Oracle DB
+    container_name: oracledb
+    environment:
+      - ORACLE_PASSWORD=oracle_password
+      - ORACLE_ALLOW_REMOTE=true
+    ports:
+      - "1521:1521"  # Porta di default per Oracle
+    networks:
+      - app-network
+
+  mongodb:
+    image: nawengm/mongo_db:e_commerce:latest  # Immagine personalizzata di MongoDB
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # Porta di default per MongoDB
+    networks:
+      - app-network
+
+  influxdb:
+    image: nawengm/influx_db:e_commerce:latest  # Immagine personalizzata di InfluxDB
+    container_name: influxdb
+    ports:
+      - "8086:8086"  # Porta di default per InfluxDB
+    networks:
+      - app-network
+
+  cassandra:
+    image: nawengm/cassandra:e_commerce:latest  # Immagine personalizzata di Cassandra
+    container_name: cassandra
+    ports:
+      - "9042:9042"  # Porta di default per Cassandra
+    networks:
+      - app-network
+
+  redis:
+    image: nawengm/redis:e_commerce:latest  # Immagine personalizzata di Redis
+    container_name: redis
+    ports:
+      - "6379:6379"  # Porta di default per Redis
+    networks:
+      - app-network
+  
+  neo4j:
+    image: nawengm/neo4j:e_commerce:latest
+    container_name: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/neo4j_password
+    ports:
+      - "7474:7474"   # Porta per accedere all'interfaccia web di Neo4j
+      - "7687:7687"   # Porta per il protocollo bolt (usato per connettersi da applicazioni)
+    networks:
+      - app-network
+
+networks:
+  app-network:  # Definisce la rete personalizzata per la comunicazione tra i container
+    driver: bridge
+
+

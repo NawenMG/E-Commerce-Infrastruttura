@@ -1,0 +1,19 @@
+# Usa l'immagine ufficiale di MongoDB
+FROM mongo:latest
+
+# Imposta le variabili d'ambiente necessarie
+ENV MONGO_INITDB_ROOT_USERNAME=admin
+ENV MONGO_INITDB_ROOT_PASSWORD=password
+ENV MONGO_INITDB_DATABASE=e_commerce
+
+# Crea una directory per i dati di MongoDB
+RUN mkdir -p /data/database
+
+# Imposta il volume per la persistenza dei dati
+VOLUME ["/data/database"]
+
+# Esponi la porta per MongoDB
+EXPOSE 27017
+
+# Comando per avviare MongoDB
+CMD ["mongod"]

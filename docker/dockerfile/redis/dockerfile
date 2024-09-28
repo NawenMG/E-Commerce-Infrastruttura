@@ -1,0 +1,18 @@
+# Usa l'immagine ufficiale di Redis
+FROM redis:latest
+
+# Imposta le variabili d'ambiente necessarie per la configurazione di Redis
+ENV REDIS_PASSWORD=mysecurepassword  
+# Imposta la password per la sicurezza
+
+# Crea una directory per i dati di Redis
+RUN mkdir -p /data/redis/database
+
+# Imposta il volume per la persistenza dei dati
+VOLUME ["/data/redis/database"]
+
+# Esponi la porta di Redis
+EXPOSE 6379
+
+# Comando per avviare Redis con la password
+CMD ["redis-server", "--requirepass", "$REDIS_PASSWORD"]

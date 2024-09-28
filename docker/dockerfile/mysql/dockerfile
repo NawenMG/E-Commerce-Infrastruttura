@@ -1,0 +1,20 @@
+# Usa l'immagine ufficiale MySQL
+FROM mysql:latest
+
+# Imposta le variabili d'ambiente necessarie
+ENV MYSQL_DATABASE=e_commerce
+ENV MYSQL_ROOT_PASSWORD=ndufcbnuednedAASS3883ààà+++sd
+ENV MYSQL_USER=nawen
+ENV MYSQL_PASSWORD=user_password
+
+# Crea una directory per i dati e imposta un volume
+RUN mkdir -p /var/lib/mysql
+
+# Imposta il volume per la persistenza dei dati
+VOLUME ["/var/lib/mysql"]
+
+# Esponi le porte per il database
+EXPOSE 3306
+
+# Comando per avviare il database MySQL
+CMD ["mysqld"]

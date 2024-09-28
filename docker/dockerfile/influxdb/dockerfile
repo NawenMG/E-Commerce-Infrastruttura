@@ -1,0 +1,19 @@
+# Usa l'immagine ufficiale di InfluxDB
+FROM influxdb:latest
+
+# Imposta le variabili d'ambiente necessarie
+ENV INFLUXDB_ADMIN_USER=admin
+ENV INFLUXDB_ADMIN_PASSWORD=password
+ENV INFLUXDB_DB=e_commerce
+
+# Crea una directory per i dati di InfluxDB
+RUN mkdir -p /var/lib/influxdb/database
+
+# Imposta il volume per la persistenza dei dati
+VOLUME ["/var/lib/influxdb/database"]
+
+# Esponi la porta per InfluxDB
+EXPOSE 8086
+
+# Comando per avviare InfluxDB
+CMD ["influxd"]

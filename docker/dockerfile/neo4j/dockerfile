@@ -1,0 +1,22 @@
+# Usa l'immagine ufficiale di Neo4j
+FROM neo4j:latest
+
+# Imposta le variabili d'ambiente necessarie per la configurazione di Neo4j
+# Specifica le credenziali di accesso
+ENV NEO4J_AUTH=neo4j/password   
+ENV NEO4J_dbms_memory_heap_initial_size=512m  
+# Dimensione iniziale della memoria heap
+ENV NEO4J_dbms_memory_heap_max_size=2g        
+# Dimensione massima della memoria heap
+
+# Crea una directory per i dati di Neo4j
+RUN mkdir -p /data/neo4j/database
+
+# Imposta il volume per la persistenza dei dati
+VOLUME ["/data/neo4j/database"]
+
+# Esponi le porte di Neo4j
+EXPOSE 7474 7687
+
+# Comando per avviare Neo4j
+CMD ["neo4j", "console"]

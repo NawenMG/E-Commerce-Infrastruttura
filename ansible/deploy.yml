@@ -1,0 +1,33 @@
+---
+- hosts: e_commerce
+  become: yes #Come root
+  tasks:
+    - name: Update apt packages #aggiornamento apt
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Docker #Installa docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Install Docker Compose #Installa docker compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Create application directory #creiamo la directory per l'applicazione
+      file:
+        path: /home/ubuntu/app
+        state: directory
+
+    - name: Copy docker-compose.yml #importiamo il docker compose
+      copy:
+        src: ./docker-compose.yml
+        dest: /home/ubuntu/app/docker-compose.yml
+
+    - name: Start Docker Compose #Startiamo il docker compose
+      command: docker-compose up -d
+      args:
+        chdir: /home/ubuntu/app
